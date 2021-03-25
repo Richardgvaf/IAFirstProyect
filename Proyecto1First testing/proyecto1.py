@@ -3,6 +3,7 @@ import networkx as nx
 import tkinter as tk
 import numpy as np
 import view
+from time import sleep 
 
 
 posiciones={}
@@ -25,10 +26,10 @@ class Nodo:
     def setPadre(self,num):
         self.padre=num
     
-    def setG(self,num):
+    def setG(self,num): #coste del camino de la casilla hasta donde estoy
         self.G=num
 
-    def setH(self,num):
+    def setH(self,num): #coste del nodo en el que estoy hasta el objetivo
         self.H=num
 
     def calcF(self):
@@ -39,7 +40,7 @@ class Nodo:
     def calcposXY(self):
         self.posXY=posiciones[self.pos]
 
-    def calcBloq(self):
+    def calcBloq(self):   #Lo que hace es calcular cuales son las casillas que el nodo actual bloquea
         if (self.pos==0):
             self.bloq=[]
         else:
@@ -157,9 +158,19 @@ def defRuta(nodo,grafo):
         var1=list(grafo)[var2]
     return ruta
 
+def rutaParcial(nodo,grafo):  #genera una ruta parcial
+    ruta = [nodo.pos]
+    var1 = nodo
+    while var1.pos != 0:
+        var2=var1.padre
+        ruta.append(var2)
+        var1=list(grafo)[var2]
+    return ruta
+
 def crearTablero(ruta):
     global tablero
-    num=5
+    num = len(ruta)-2
+    print(num)
     for x in range(6):
         lista=[]
         for y in range(6):
@@ -172,7 +183,24 @@ def crearTablero(ruta):
                 lista.append("0")
         tablero.append(lista)
     print(tablero)
-            
+
+def crearTablero2(ruta,grafo):
+    global tablero
+    tablero = []
+    num = len(ruta)-2
+    for x in range(6):
+        lista=[]
+        for y in range(6):
+            var=[x,y]
+            posi=ruta[num]
+            if buscarpos(var)==posi:
+                lista.append("Q")
+                num=num-1
+            else:
+                varComoSea = list(grafo)[buscarpos(var)].F
+                lista.append(str(varComoSea))
+        tablero.append(lista)
+    print(tablero)
 
 
 
@@ -181,49 +209,53 @@ def AEstrella(grf):
     cerrado=[0]
     abierto=list(grf)[0].vecinos
     ruta=[]
-    for veci in list(grf)[0].vecinos:
+    for veci in list(grf)[0].vecinos: ##tablero vacio todos son los vecinos calcula H y G y setea a todo el tablero
         G=calcNewG(list(grf)[0],list(grf)[veci])
         H=calcNewH(list(grf)[0],list(grf)[veci])
-        list(grf)[veci].setG(G)
+        list(grf)[veci].setG(G) #cuando accede "veci" es el numero de posicion del vecino 
         list(grf)[veci].setH(H)
         list(grf)[veci].calcF()
 
-    while not fin:
-        if len(abierto)==0: #si ya no hay abiertos
+    while not fin: #
+        if len(abierto)==0: #si ya no hay abiertos   #Nota No usar para interfaz
             ruta=defRuta(list(grf)[men],grf)
             print(ruta)
             crearTablero(ruta)
             break
-        men=menor(grf,abierto) #se toma el de menor F
+        men=menor(grf,abierto) # Calcula en el grupo de los abiertos el menor F
 
-        for vec in list(grf)[men].vecinos: #se analizan los vecinos
-            newG=calcNewG(list(grf)[men],list(grf)[vec]) #se calcula el nuevo G
+        for vec in list(grf)[men].vecinos: #Los vecinos de la casilla del grafo de menor F se analizan      
+            newG=calcNewG(list(grf)[men],list(grf)[vec]) #se calcula el nuevo G 
             if newG<list(grf)[vec].G: #si el nuevo G es menor se actualiza el G y H, y se coloca el nuevo padre
                 list(grf)[vec].setG(newG)
                 list(grf)[vec].setH(calcNewH(list(grf)[men],list(grf)[vec]))
                 list(grf)[vec].setPadre(men)
                 list(grf)[vec].calcF() #se recalcula F
-                list(grf)[vec].bloq=[]
-                list(grf)[vec].calcBloq()
+                list(grf)[vec].bloq=[] #Hace un append que quita todos los bloqueados y se vuelven a poner vacios
+                list(grf)[vec].calcBloq() #bloqueamos los correspondientes al nodo actual
                 
-                for bloque in list(grf)[men].bloq: #se agregan los nuevos bloqueados
-                    """if bloque in abierto:
-                            abierto.remove(bloque)"""
-                    if bloque not in list(grf)[vec].bloq:
-                        list(grf)[vec].bloq.append(bloque)
-                        if bloque in list(grf)[vec].vecinos:
-                            list(grf)[vec].vecinos.remove(bloque)
+                for bloque in list(grf)[men].bloq: #Se toman los bloqueados desde el nodo padre y se le colocan al hijo
+                    if bloque not in list(grf)[vec].bloq: #Si no se encuentra en la lista de bloqueados del hijo se agregan (validacion para evitar duplicados)
+                        list(grf)[vec].bloq.append(bloque) #se agregan bloqueados no repetidos
+                        if bloque in list(grf)[vec].vecinos:    #si el bloque es un vecino del hijo se quita de la lista de vecinos del hijo  
+                            list(grf)[vec].vecinos.remove(bloque) #se quita el nodo bloqueado de la lista de vecinos
                     list(grf)[vec].calcVecinos() #se actualizan los vecinos
-                    list(grf)[vec].bloq.sort()
-                    list(grf)[vec].vecinos.sort()
+                    list(grf)[vec].bloq.sort() #ordenamos la lista
+                    list(grf)[vec].vecinos.sort() #ordenamos la lista
+            
+        ruta = rutaParcial(list(grf)[men],grf)
+        print(list(grf)[men].bloq)
+        crearTablero2(ruta,grf)
+        print("\n")
+        
+
 
         if men in abierto:
             abierto.remove(men)#se elimina de la lista de abiertos
             cerrado.append(men)#se incluye a la lista de cerrados
             if list(grf)[men].posXY[0]==5:
                 ruta=defRuta(list(grf)[men],grf)
-##                print(ruta)
-                crearTablero(ruta)
+                crearTablero2(ruta,grf)
                 fin=True
 
     
@@ -232,7 +264,7 @@ def AEstrella(grf):
 
 main()
 root = tk.Tk()
-#Matrix1 = [[0,0,"Q",0,0,0],[0,0,0,0,0,"Q"],[0,"Q",0,0,0,0],[0,0,0,0,"Q",0],["Q",0,0,0,0,0],[0,0,0,"Q",0,0]]
+
 app = view.Application(master=root,Matrix=tablero)
 
 app.mainloop()
