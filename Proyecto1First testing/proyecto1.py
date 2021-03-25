@@ -8,7 +8,12 @@ from time import sleep
 
 posiciones={}
 tablero=[]
-
+global lista_nodo_bloqueado
+global lista_nodo_abierto
+global lista_de_tableros
+lista_nodo_bloqueado =[]
+lista_nodo_abierto =[]
+lista_de_tableros =[]
 
 class Nodo:
     def __init__(self, num):
@@ -200,7 +205,6 @@ def crearTablero2(ruta,grafo):
                 varComoSea = list(grafo)[buscarpos(var)].F
                 lista.append(str(varComoSea))
         tablero.append(lista)
-    print(tablero)
 
 
 
@@ -244,9 +248,11 @@ def AEstrella(grf):
                     list(grf)[vec].vecinos.sort() #ordenamos la lista
             
         ruta = rutaParcial(list(grf)[men],grf)
-        print(list(grf)[men].bloq)
         crearTablero2(ruta,grf)
-        print("\n")
+        lista_nodo_bloqueado.append(list(grf)[men].bloq);
+        lista_nodo_abierto.append(list(grf)[men].vecinos);
+        lista_de_tableros.append(tablero)
+        
         
 
 
@@ -258,14 +264,11 @@ def AEstrella(grf):
                 crearTablero2(ruta,grf)
                 fin=True
 
-    
-
-
 
 main()
 root = tk.Tk()
 
-app = view.Application(master=root,Matrix=tablero)
+app = view.Application(master=root,Matrix=lista_de_tableros,open_nodes = lista_nodo_abierto,close_nodes = lista_nodo_bloqueado)
 
 app.mainloop()
 
