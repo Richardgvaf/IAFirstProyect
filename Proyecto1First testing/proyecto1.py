@@ -10,10 +10,12 @@ posiciones={}
 tablero=[]
 global lista_nodo_bloqueado
 global lista_nodo_abierto
+global lista_nodo_cerrado
 global lista_de_tableros
 lista_nodo_bloqueado =[]
 lista_nodo_abierto =[]
 lista_de_tableros =[]
+lista_nodo_cerrado= []
 
 class Nodo:
     def __init__(self, num):
@@ -251,7 +253,10 @@ def AEstrella(grf):
         crearTablero2(ruta,grf)
         lista_nodo_bloqueado.append(list(grf)[men].bloq);
         lista_nodo_abierto.append(list(grf)[men].vecinos);
+        lista_nodo_cerrado.append(list(cerrado));
         lista_de_tableros.append(tablero)
+        #print("listaCerrado ",cerrado)
+        print("listaCerrado ",lista_nodo_cerrado)
         
         
 
@@ -268,7 +273,7 @@ def AEstrella(grf):
 main()
 root = tk.Tk()
 
-app = view.Application(master=root,Matrix=lista_de_tableros,open_nodes = lista_nodo_abierto,close_nodes = lista_nodo_bloqueado)
+app = view.Application(master=root,Matrix=lista_de_tableros,open_nodes = lista_nodo_abierto,close_nodes = lista_nodo_cerrado,bloq_nodes = lista_nodo_bloqueado)
 
 app.mainloop()
 

@@ -2,7 +2,7 @@ import tkinter as tk
 from PIL import ImageTk,Image
 
 class Application(tk.Frame):
-    def __init__(self, master=None,Matrix=[],open_nodes = [],close_nodes = []):
+    def __init__(self, master=None,Matrix=[],open_nodes = [],close_nodes = [],bloq_nodes = []):
         super().__init__(master)
         self.master = master
         self.master.geometry("800x800")
@@ -10,6 +10,7 @@ class Application(tk.Frame):
         self.keyboard_list = Matrix
         self.open_nodes = open_nodes;
         self.close_nodes = close_nodes;
+        self.bloq_nodes = bloq_nodes;
         self.pos_to_show = 0
         self.show_Elements()
         self.show_Matrix()
@@ -56,7 +57,6 @@ class Application(tk.Frame):
     def show_Elements(self):
         icount=0
         jcount=0
-        print("keyboard_list", self.keyboard_list[self.pos_to_show])
         for i in self.keyboard_list[self.pos_to_show]:
             for j in i:
                 if (self.keyboard_list[self.pos_to_show][icount][jcount] == "Q") and ((icount+jcount)%2 == 0):
@@ -75,7 +75,6 @@ class Application(tk.Frame):
             jcount = 0
 
     def show_Open_Nodes(self):
-        print("value of closed nodes",self.open_nodes[self.pos_to_show])
         for i in self.open_nodes[self.pos_to_show]:
                 x = (i-1) % self.matrix_size
                 y = (i-1) // self.matrix_size
@@ -85,7 +84,6 @@ class Application(tk.Frame):
                 self.matrix_state_of_nodes[x][y].place(x=x*100+180,y=y*100+100,height=33, width=20)
 
     def show_Closed_Nodes(self):
-        print("value of closed nodes",self.close_nodes[self.pos_to_show])
         for i in self.close_nodes[self.pos_to_show]:
                 x = (i-1) % self.matrix_size
                 y = (i-1) // self.matrix_size
@@ -95,16 +93,20 @@ class Application(tk.Frame):
                 self.matrix_state_of_nodes[x][y].place(x=x*100+180,y=y*100+166,height=33, width=20)
 
     def show_Matrix(self):
-        
+        print("value of bloq_nodes" , self.bloq_nodes[self.pos_to_show])
         cont = 0
-        print(self.keyboard_list[self.pos_to_show])
-        print(self.keyboard_list[self.pos_to_show][0])
+        print("value of close_nodes" , self.close_nodes[self.pos_to_show])
         for i in self.keyboard_list[self.pos_to_show]:
             for j in i:
                 x = cont % self.matrix_size
                 y = cont // self.matrix_size
                 tk.Label(image=self.image_open_node)
+                
                 self.matrix_value_of_nodes[x][y] = tk.Label(text = str(j))
+                if cont in self.bloq_nodes[self.pos_to_show]:
+                    self.matrix_value_of_nodes[x][y].config(bg="gray")
+                else:
+                    self.matrix_value_of_nodes[x][y].config(bg="white")
                 self.matrix_value_of_nodes[x][y].pack()
                 self.matrix_value_of_nodes[x][y].place(x=x*100+180,y=y*100+133,height=33, width=20)
                 cont += 1
