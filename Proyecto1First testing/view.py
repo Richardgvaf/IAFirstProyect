@@ -14,7 +14,7 @@ class Application(tk.Frame):
         self.pos_to_show = 0
         self.show_Elements()
         self.show_Matrix()
-        self.show_Closed_Nodes()
+        self.show_Bloq_Nodes()
         self.show_Open_Nodes()
         self.show_Buttoms()
 
@@ -83,8 +83,8 @@ class Application(tk.Frame):
                 self.matrix_state_of_nodes[x][y].pack()
                 self.matrix_state_of_nodes[x][y].place(x=x*100+180,y=y*100+100,height=33, width=20)
 
-    def show_Closed_Nodes(self):
-        for i in self.close_nodes[self.pos_to_show]:
+    def show_Bloq_Nodes(self):
+        for i in self.bloq_nodes[self.pos_to_show]:
                 x = (i-1) % self.matrix_size
                 y = (i-1) // self.matrix_size
 
@@ -104,7 +104,8 @@ class Application(tk.Frame):
                 tk.Label(image=self.image_open_node)
                 
                 self.matrix_value_of_nodes[x][y] = tk.Label(text = str(j))
-                if cont2 in self.bloq_nodes[self.pos_to_show]:
+                if cont in self.close_nodes[self.pos_to_show]:
+                    print("Entra ", cont2)
                     self.matrix_value_of_nodes[x][y].config(bg="gray")
                 else:
                     self.matrix_value_of_nodes[x][y].config(bg="white")
@@ -120,7 +121,7 @@ class Application(tk.Frame):
         else:
             self.show_Elements()
             self.show_Matrix()
-            self.show_Closed_Nodes()
+            self.show_Bloq_Nodes()
             self.show_Open_Nodes()
 
     def show_Buttoms(self):
