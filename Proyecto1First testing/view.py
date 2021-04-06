@@ -97,19 +97,21 @@ class Application(tk.Frame):
         cont = 0
         print("value of close_nodes" , self.close_nodes[self.pos_to_show])
         for i in self.keyboard_list[self.pos_to_show]:
+            cont2 = 0
             for j in i:
                 x = cont % self.matrix_size
                 y = cont // self.matrix_size
                 tk.Label(image=self.image_open_node)
                 
                 self.matrix_value_of_nodes[x][y] = tk.Label(text = str(j))
-                if cont in self.bloq_nodes[self.pos_to_show]:
+                if cont2 in self.bloq_nodes[self.pos_to_show]:
                     self.matrix_value_of_nodes[x][y].config(bg="gray")
                 else:
                     self.matrix_value_of_nodes[x][y].config(bg="white")
                 self.matrix_value_of_nodes[x][y].pack()
                 self.matrix_value_of_nodes[x][y].place(x=x*100+180,y=y*100+133,height=33, width=20)
                 cont += 1
+                cont2 +=1
 
     def show_Next(self):
         self.pos_to_show += 1;
