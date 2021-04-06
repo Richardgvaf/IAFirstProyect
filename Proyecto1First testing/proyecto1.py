@@ -127,24 +127,24 @@ def calcNewG(nodo,vecino):
     if vecino.posXY[0]==(nodo.posXY[0]):
         newg=nodo.G
     if vecino.posXY[0]==(nodo.posXY[0]+1):
-        newg=nodo.G+10
+        newg=nodo.G+1
         if nodo.pos==0:
-            newg=nodo.G+11
+            newg=nodo.G+2
         else:
             if (vecino.posXY[1])<=(nodo.posXY[1]+2):
                 newg=newg-1
     if vecino.posXY[0]==(nodo.posXY[0]+2):
-        newg=nodo.G+21
+        newg=nodo.G+3
     if vecino.posXY[0]==(nodo.posXY[0]+3):
-        newg=nodo.G+31
+        newg=nodo.G+4
     if vecino.posXY[0]==(nodo.posXY[0]+4):
-        newg=nodo.G+41
+        newg=nodo.G+5
     if vecino.posXY[0]==(nodo.posXY[0]+5):
-        newg=nodo.G+51
+        newg=nodo.G+6
     if vecino.posXY[0]==(nodo.posXY[0]+6):
-        newg=nodo.G+61
+        newg=nodo.G+7
     if nodo.pos==0:
-        newg=newg+10
+        newg=newg+1
     return newg
 
 def calcNewH(nodo,vecino):
